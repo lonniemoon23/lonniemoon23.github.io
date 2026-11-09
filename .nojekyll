@@ -1,0 +1,1 @@
+Serve every file as-is (no Jekyll), so /.well-known reaches iOS.
