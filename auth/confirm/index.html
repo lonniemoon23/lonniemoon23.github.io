@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Banked</title>
+<style>
+  :root { --butter:#FFD447; --ink:#17151C; --paper:#FBF8F1; --stone:#6B6574; }
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+         background:var(--paper); color:var(--ink); font:17px/1.5 -apple-system, "Inter", sans-serif; }
+  main { max-width:420px; padding:32px 20px; }
+  h1 { font-size:32px; line-height:1.15; margin:0 0 12px; }
+  p { color:var(--stone); margin:0 0 12px; }
+  .coin { width:56px; height:56px; border-radius:50%; background:var(--butter); margin-bottom:24px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="coin" aria-hidden="true"></div>
+  <h1 id="title">Confirming…</h1>
+  <p id="detail"></p>
+</main>
+<script>
+  // Fill these in with the project's public URL and anon key (both are safe to publish).
+  const SUPABASE_URL = "https://YOUR-PROJECT-REF.supabase.co";
+  const SUPABASE_ANON_KEY = "YOUR-ANON-KEY";
+
+  const params = new URLSearchParams(location.search);
+  const tokenHash = params.get("token_hash");
+  const type = params.get("type");
+  const title = document.getElementById("title");
+  const detail = document.getElementById("detail");
+
+  function show(t, d) { title.textContent = t; detail.textContent = d; }
+
+  if (type === "recovery") {
+    // A new password is chosen in the app, so this link has to be opened on the iPhone.
+    show("Open this link on your iPhone", "Tap the link in the email on the iPhone with Banked to choose a new password.");
+  } else if (!tokenHash) {
+    show("This link isn't complete", "Open the newest email from Banked and tap the button again.");
+  } else {
+    // Opened on a computer or a phone without Banked: confirm here.
+    fetch(`${SUPABASE_URL}/auth/v1/verify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", apikey: SUPABASE_ANON_KEY },
+      body: JSON.stringify({ type: type || "signup", token_hash: tokenHash }),
+    }).then((r) => {
+      if (r.ok) show("Confirmed.", "Open Banked on your iPhone and sign in with your email and password.");
+      else show("This link has expired", "Open Banked, go to Settings, and tap Resend under Confirm your email.");
+    }).catch(() => show("No connection", "Check your connection and open the link again."));
+  }
+</script>
+</body>
+</html>
