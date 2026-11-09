@@ -1,0 +1,12 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["BKVKD5BLJ8.com.trybanked.app"],
+        "components": [
+          { "/": "/auth/confirm*", "comment": "Email confirmation and password reset links open Banked" }
+        ]
+      }
+    ]
+  }
+}
